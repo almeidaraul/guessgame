@@ -1,83 +1,27 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { Button, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import TeamList from '../components/TeamList.js';
+import ThemeDropdown from '../components/ThemeDropdown.js'
+import SecondsInput from '../components/SecondsInput.js';
 
-export default class Settings extends React.Component() {
-	var teams = [];
-	const setTeams(value) { teams = value };
-	const [teams, setTeams] = React.useState(['#6698ff']);
-	const COLORS = [
-		'#6698ff',
-		'#aa2e25',
-		'#a31545',
-		'#6d1b7b',
-		'#482880',
-		'#1769aa',
-		'#0276aa',
-		'#008394',
-		'#00695f',
-		'#357a38',
-		'#618833',
-		'#8f9a27',
-		'#b2a429',
-		'#b28704',
-		'#b26a00',
-		'#b23c17',
-		];
-
-	const changeColor = (current_color, new_color) => {
-		if (teams.length < COLORS.length) {
-			var teams_copy = teams.slice();
-			teams_copy[teams_copy.indexOf(current_color)] = new_color;
-			setTeams(teams_copy);
-		}
-	}
-
-	const deleteTeam = (color) => {
-		var teams_copy = teams.slice();
-		teams_copy.splice(teams_copy.indexOf(color), 1);
-		setTeams(teams_copy);
-	}
-
-	const addTeam = () => {
-		var i = 0;
-		for (; i < COLORS.length; i++)
-			if (teams.indexOf(COLORS[i]) == -1) {
-				var teams_copy = teams.slice();
-				teams_copy.push(COLORS[i]);
-				setTeams(teams_copy);
-				break;
-			}
-	}
-
+export default function Settings() {
+	const [teams, setTeams] = React.useState(['skyblue']);
+	const [theme, setTheme] = React.useState("Raul");
+	const [seconds, setSeconds] = React.useState(60);
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
         <View style={styles.mainContainer}>
-          <Text style={styles.settingsTitle}>Teams</Text>
-					<Button title="Clear" onPress={() => setTeams([])} />
-					<TouchableOpacity
-						style={teamStyle('#909090')}
-						onPress={() => addTeam()}
-					/>
-					<View style={styles.teamList}>
-						{teams.map((team) => {
-							return (
-								<TouchableOpacity
-									style={teamStyle(team)}
-									onPress={() => changeColor(team, COLORS[Math.floor(Math.random()*10)%COLORS.length])}
-									onLongPress={() => deleteTeam(team)}
-									id={team}
-									/>
-						);})}
-
-					</View>
-
+		      <Text style={styles.settingsTitle}>Teams</Text>
+						<Text>Note that team colors should be unique.</Text>
+						<TeamList teams={teams} setTeams={setTeams} />
           <Text style={styles.settingsTitle}>Theme</Text>
-
+						<ThemeDropdown theme={theme} setTheme={setTheme}/>
 					<Text style={styles.settingsTitle}>Timer</Text>
+						<SecondsInput seconds={seconds} setSeconds={setSeconds}/>
         </View>
 
       </ScrollView>
@@ -92,16 +36,6 @@ export default class Settings extends React.Component() {
 Settings.navigationOptions = {
   header: null,
 };
-
-const teamStyle = (color) => {
-	return {
-		width: 50,
-		height: 50,
-		backgroundColor: color,
-		borderRadius: 10,
-		margin: 2.5,
-	}
-}
 
 const styles = StyleSheet.create({
   container: {
@@ -157,11 +91,4 @@ const styles = StyleSheet.create({
   navigationFilename: {
     marginTop: 5,
   },
-	teamList: {
-		width: '90%',
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'center',
-		flexWrap: 'wrap',
-	},
 });

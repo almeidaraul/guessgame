@@ -1,74 +1,78 @@
-import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
+import { Text, StyleSheet, View } from 'react-native';
 
 export default function Game() {
+  const [current_team, setCurrentTeam] = React.useState(0);
+  const [round, setRound] = React.useState(1);
+  const [score, setScore] = React.useState({});
+
+  //remove this variable once you figure out how to get data from Settings.js
+  const props = {
+    teams: ['skyblue', 'tomato', 'gold'],
+    timer: 50,
+    theme: 'Raul',
+  };
+
+  () => {
+    let score_init = {};
+    for (team in props.teams)
+      score_init[team] = 0;
+    setScore(score_init);
+  };
+
+  setInterval(() => setCurrentTeam((current_team+1)%props.teams.length), 1000*props.timer);
+
+  /*TODO: timer
+    when timer is going, have a button to pause it
+    when timer reaches 0, have a button to start next word
+    actually have the timer go from props.timer to 0
+  */
+  /*TODO: teams
+    team list with scores
+    manage score
+  */
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <OptionButton
-        icon="md-school"
-        label="Read the Expo documentation"
-        onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
-      />
-
-      <OptionButton
-        icon="md-compass"
-        label="Read the React Navigation documentation"
-        onPress={() => WebBrowser.openBrowserAsync('https://reactnavigation.org')}
-      />
-
-      <OptionButton
-        icon="ios-chatboxes"
-        label="Ask a question on the forums"
-        onPress={() => WebBrowser.openBrowserAsync('https://forums.expo.io')}
-        isLastOption
-      />
-    </ScrollView>
-  );
-}
-
-function OptionButton({ icon, label, onPress, isLastOption }) {
-  return (
-    <RectButton style={[styles.option, isLastOption && styles.lastOption]} onPress={onPress}>
-      <View style={{ flexDirection: 'row' }}>
-        <View style={styles.optionIconContainer}>
-          <Ionicons name={icon} size={22} color="rgba(0,0,0,0.35)" />
-        </View>
-        <View style={styles.optionTextContainer}>
-          <Text style={styles.optionText}>{label}</Text>
-        </View>
+    <View style={mainViewStyle(props.teams[current_team])}>
+      <View style={{...styles.basicView, marginTop: 25}}>
+        <Text style={styles.basicTitle}>Round {round}</Text>
+        <Text style={{...styles.basicTitle, fontSize: 50}}>PALAVRA</Text>
       </View>
-    </RectButton>
+      <View style={{...styles.basicView, marginTop: 20}}>
+        <Text style={{...styles.basicTitle, fontSize: 80}}>{90}s</Text>
+      </View>
+      <View style={styles.basicView}>
+        {props.teams.map((team) => {
+          return (
+            <View style={styles.teamSquare}>
+              <Text>{score[team]}</Text>
+            </View>
+          );
+        })}
+      </View>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
+const mainViewStyle = (team) => {
+  return {
+    backgroundColor: team,
     flex: 1,
-    backgroundColor: '#fafafa',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+  };
+}
+const styles = StyleSheet.create({
+  basicView: {
+    width: '70%',
+    paddingVertical: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    alignItems: 'center',
   },
-  contentContainer: {
-    paddingTop: 15,
-  },
-  optionIconContainer: {
-    marginRight: 12,
-  },
-  option: {
-    backgroundColor: '#fdfdfd',
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: 0,
-    borderColor: '#ededed',
-  },
-  lastOption: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  optionText: {
-    fontSize: 15,
-    alignSelf: 'flex-start',
-    marginTop: 1,
-  },
-});
+  basicTitle: {
+    color: 'white',
+    fontSize: 30,
+  }
+})
