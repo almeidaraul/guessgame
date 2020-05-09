@@ -6,7 +6,9 @@ import TeamList from '../components/TeamList.js';
 import ThemeDropdown from '../components/ThemeDropdown.js'
 import SecondsInput from '../components/SecondsInput.js';
 
-export default function Settings() {
+export default function Settings({navigation, route}) {
+	console.log("to no settings");
+	console.log(route);
 	const [teams, setTeams] = React.useState(['skyblue']);
 	const [theme, setTheme] = React.useState("Raul");
 	const [seconds, setSeconds] = React.useState(60);
@@ -27,7 +29,9 @@ export default function Settings() {
       </ScrollView>
 
       <View style={styles.tabBarSaveSettings}>
-        <Text style={styles.tabBarInfoText}>Go to game</Text>
+				<TouchableOpacity onPress={() => navigation.navigate('Game')}>
+					<Text style={styles.tabBarInfoText}>Go to game</Text>
+				</TouchableOpacity>
       </View>
     </View>
   );
