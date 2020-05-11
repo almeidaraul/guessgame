@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-community/picker';
+import words from '../assets/themes.js';
 
 export default function ThemeDropdown(props) {
   return (
@@ -10,8 +11,9 @@ export default function ThemeDropdown(props) {
         onValueChange={(value, index) => props.setTheme(value)}
         itemStyle={styles.dropdownItem}
         >
-        <Picker.Item label="Raul" value="Raul" />
-        <Picker.Item label="Moni" value="Moni" />
+        {Object.keys(words).map(theme => {
+          return <Picker.Item label={theme} value={theme} />
+        })}
       </Picker>
     </View>
   );

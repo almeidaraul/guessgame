@@ -13,6 +13,7 @@ export default function BottomTabNavigator({ navigation, route }) {
   // currently active tab. Learn more in the documentation:
   // https://reactnavigation.org/docs/en/screen-options-resolution.html
   navigation.setOptions({ headerTitle: getHeaderTitle(route) });
+  const [teams, setTeams] = React.useState([]);
 
   return (
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
@@ -31,6 +32,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           title: 'Game',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
+        initialParams={{teams: teams}}
       />
     </BottomTab.Navigator>
   );

@@ -1,24 +1,26 @@
 import * as React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import words from '../assets/themes.js'
 
-export default function Game({ teams, setTeams }) {
-  //remove this variable once you figure out how to get data from Settings.js
+export default function Game({ route }) {
   const props = {
-    teams: ['skyblue', 'tomato', 'gold'],
-    timer: 5,
-    theme: 'Raul',
+    teams: route.params.teams,
+    timer: route.params.timer,
+    theme: route.params.theme,
   };
-  console.log({teams, setTeams});
+  const start_index = Math.floor(Math.random()*100)%words[props.theme].length;
 
   const [current_team, setCurrentTeam] = React.useState(0);
   const [round, setRound] = React.useState(1);
   const [score, setScore] = React.useState(scoreInit(props.teams));
   const [timer, setTimer] = React.useState(props.timer);
-  const [paused_timer, setPausedTimer] = React.useState(false);
+  const [paused_timer, setPausedTimer] = React.useState(true);
+  const [available_words, setAvailableWords] = React.useState(words[props.theme].slice().splice(start_index, 1));
+  const [current_word, setCurrentWord] = React.useState(words[props.theme][start_index].slice());
 
 
   const increaseScore = (team) => {
-    if (!paused_timer) {
+    if (paused_timer) {
       var score_copy = Object.assign({}, score);
       score_copy[team]++;
       setScore(score_copy);
@@ -26,12 +28,34 @@ export default function Game({ teams, setTeams }) {
   }
 
   const decreaseScore = (team) => {
-    if (!paused_timer) {
+    if (paused_timer) {
       var score_copy = Object.assign({}, score);
       score_copy[team]--;
       setScore(score_copy);
     }
   }
+
+  const handlePauseButton = () => {
+    if (paused_timer && (timer == 0)) {
+      setTimer(props.timer);
+      if (available_words.length) {
+        const i = Math.floor(Math.random()*100)%available_words.length;
+        setCurrentWord(available_words[i].slice());
+        setAvailableWords(available_words.splice(i, 1));
+      } else {
+        setCurrentWord("No more words");
+      }
+    }
+    setPausedTimer(!paused_timer);
+  }
+
+  const updateTimer = () => {
+    if (!paused_timer)
+      setTimer(timer-1);
+    if (timer == 0)
+      setPausedTimer(true);
+  }
+  setInterval(() => updateTimer(), 1000);
 
   /*TODO: timer
     when timer is going, have a button to pause it
@@ -42,11 +66,11 @@ export default function Game({ teams, setTeams }) {
     <View style={{...styles.mainView, backgroundColor: props.teams[current_team]}}>
       <View style={{...styles.basicView, marginTop: 25}}>
         <Text style={styles.basicTitle}>Round {round}</Text>
-        <Text style={{...styles.basicTitle, fontSize: 50}}>PALAVRA</Text>
+        <Text style={{...styles.basicTitle, fontSize: 50}}>{current_word}</Text>
       </View>
       <View style={{...styles.basicView, marginTop: 20}}>
-        <Text style={{...styles.basicTitle, fontSize: 80}}>{90}s</Text>
-        <TouchableOpacity style={styles.button} onPress={() => setPausedTimer(!paused_timer)}>
+        <Text style={{...styles.basicTitle, fontSize: 80}}>{timer}s</Text>
+        <TouchableOpacity style={styles.button} onPress={() => handlePauseButton()}>
           <Text style={{...styles.basicTitle, fontSize: 30}}>
             {(current_team == 0) && (timer == props.timer) ? 'Start round' : paused_timer ? 'Continue' : 'Pause'}
           </Text>
@@ -55,9 +79,8 @@ export default function Game({ teams, setTeams }) {
       <View style={{...styles.basicView, marginTop: 'auto', marginBottom: 15, flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'center'}}>
         {props.teams.map((team) => {
           return (
-            <View style={{...styles.teamScore, borderRadius: 15, backgroundColor: team, margin: 5}}>
+            <View key={team} style={{...styles.teamScore, borderRadius: 15, backgroundColor: team, margin: 5}}>
               <TouchableOpacity
-                key={team}
                 onPress={() => increaseScore(team)}
                 onLongPress={() => decreaseScore(team)}
                 >
