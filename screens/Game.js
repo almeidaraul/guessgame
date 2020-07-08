@@ -17,6 +17,7 @@ export default function Game({ route }) {
   const [paused_timer, setPausedTimer] = React.useState(true);
   const [available_words, setAvailableWords] = React.useState(words[props.theme].slice().splice(start_index, 1));
   const [current_word, setCurrentWord] = React.useState(words[props.theme][start_index].slice());
+  var interval;
 
 
   const increaseScore = (team) => {
@@ -35,33 +36,42 @@ export default function Game({ route }) {
     }
   }
 
-  const handlePauseButton = () => {
-    if (paused_timer && (timer == 0)) {
+  const decreaseTimer = () => {
+    console.log(interval);
+    setTimer(timer-1);
+  }
+
+  const unpauseTimer = () => {
+    setPausedTimer(false);
+    interval = setInterval(() => {console.log(interval); setTimer(timer-1)}, 1000);
+  }
+
+  const pauseTimer = () => {
+    setPausedTimer(true);
+    clearInterval(interval);
+    if (timer == 0) {
       setTimer(props.timer);
-      if (available_words.length) {
-        const i = Math.floor(Math.random()*100)%available_words.length;
-        setCurrentWord(available_words[i].slice());
-        setAvailableWords(available_words.splice(i, 1));
-      } else {
-        setCurrentWord("No more words");
-      }
+      updateWord();
     }
-    setPausedTimer(!paused_timer);
   }
 
-  const updateTimer = () => {
-    if (!paused_timer)
-      setTimer(timer-1);
-    if (timer == 0)
-      setPausedTimer(true);
+  const updateWord = () => {
+    if (available_words.length) {
+      const i = Math.floor(Math.random()*100)%available_words.length;
+      setCurrentWord(available_words[i].slice());
+      setAvailableWords(available_words.splice(i, 1));
+    } else {
+      setCurrentWord("No more words");
+    }
   }
-  setInterval(() => updateTimer(), 1000);
 
-  /*TODO: timer
-    when timer is going, have a button to pause it
-    when timer reaches 0, have a button to start next word
-    actually have the timer go from props.timer to 0
-  */
+  const handlePauseButton = () => {
+    if (paused_timer)
+      unpauseTimer();
+    else
+      pauseTimer();
+  }
+
   return (
     <View style={{...styles.mainView, backgroundColor: props.teams[current_team]}}>
       <View style={{...styles.basicView, marginTop: 25}}>

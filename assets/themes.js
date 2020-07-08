@@ -1,13 +1,13 @@
 export default words = {
-    'Raul': [
+    'Boi': [
       'Boi',
       'Vaca',
       'Cachorro',
       'Cadela',
       'Gato',
-      'Aranha'
+      'Aranha',
     ],
-    'Moni': [
+    'Pc': [
       'Computador',
       'Igreja',
       'Casaco',
