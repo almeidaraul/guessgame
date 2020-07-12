@@ -11,7 +11,29 @@ export default function Game({ route }) {
   const [current_team, setCurrentTeam] = React.useState(0);
   const [round, setRound] = React.useState(1);
   const [score, setScore] = React.useState(scoreInit(props.teams));
+	const [timerSeconds, setTimerSeconds] = React.useState(props.timer);
+	const [timerPaused, setTimerPaused] = React.useState(true);
 
+	//timer logic
+	React.useEffect(() => {
+		!timerPaused && timerSeconds > 0 && setTimeout(() => setTimerSeconds(timerSeconds - 1), 1000);
+		if (!timerSeconds) { //just got to zero
+			if (!((current_team+1)%(props.teams.length)))
+				incrementRound();
+			setCurrentTeam((current_team+1)%(props.teams.length));
+			setTimerPaused(true);
+			resetTimerSeconds();
+		}
+  }, [timerSeconds, timerPaused]);
+
+	const resetTimerSeconds = () => { setTimerSeconds(props.timer) }
+	
+	const flipTimerPaused = () => { setTimerPaused(!timerPaused) }
+	
+	const timerIsReset = () => { return timerSeconds == props.timer }
+	//end timer logic
+
+	const incrementRound = () => { setRound(round+1) }
 
   const increaseScore = (team) => {
 		var score_copy = Object.assign({}, score);
@@ -26,6 +48,7 @@ export default function Game({ route }) {
   }
 
   const handlePauseButton = () => {
+		flipTimerPaused();
   }
 
   return (
@@ -35,11 +58,10 @@ export default function Game({ route }) {
         <Text style={styles.currentWord}>word</Text>
       </View>
       <View style={styles.roundActionsView}>
-        <Text style={styles.timer}>{80}s</Text>
+        <Text style={styles.timer}>{timerSeconds}s</Text>
         <TouchableOpacity style={styles.button} onPress={() => handlePauseButton()}>
           <Text style={styles.basicTitle}>
-            {/*(current_team == 0) && (timer == props.timer) ? 'Start round' : paused_timer ? 'Continue' : 'Pause'*/}
-						Start round
+            {(current_team == 0) && timerIsReset() ? 'Start round' : timerPaused ? (timerIsReset() ? 'Start' : 'Continue') : 'Pause'}
           </Text>
         </TouchableOpacity>
       </View>
