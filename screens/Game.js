@@ -8,81 +8,40 @@ export default function Game({ route }) {
     timer: route.params.timer,
     theme: route.params.theme,
   };
-  const start_index = Math.floor(Math.random()*100)%words[props.theme].length;
-
   const [current_team, setCurrentTeam] = React.useState(0);
   const [round, setRound] = React.useState(1);
   const [score, setScore] = React.useState(scoreInit(props.teams));
-  const [timer, setTimer] = React.useState(props.timer);
-  const [paused_timer, setPausedTimer] = React.useState(true);
-  const [available_words, setAvailableWords] = React.useState(words[props.theme].slice().splice(start_index, 1));
-  const [current_word, setCurrentWord] = React.useState(words[props.theme][start_index].slice());
-  var interval;
 
 
   const increaseScore = (team) => {
-    if (paused_timer) {
+    //if (paused_timer) {
       var score_copy = Object.assign({}, score);
       score_copy[team]++;
       setScore(score_copy);
-    }
   }
 
   const decreaseScore = (team) => {
-    if (paused_timer) {
+    //if (paused_timer) {
       var score_copy = Object.assign({}, score);
       score_copy[team]--;
       setScore(score_copy);
-    }
-  }
-
-  const decreaseTimer = () => {
-    console.log(interval);
-    setTimer(timer-1);
-  }
-
-  const unpauseTimer = () => {
-    setPausedTimer(false);
-    interval = setInterval(() => {console.log(interval); setTimer(timer-1)}, 1000);
-  }
-
-  const pauseTimer = () => {
-    setPausedTimer(true);
-    clearInterval(interval);
-    if (timer == 0) {
-      setTimer(props.timer);
-      updateWord();
-    }
-  }
-
-  const updateWord = () => {
-    if (available_words.length) {
-      const i = Math.floor(Math.random()*100)%available_words.length;
-      setCurrentWord(available_words[i].slice());
-      setAvailableWords(available_words.splice(i, 1));
-    } else {
-      setCurrentWord("No more words");
-    }
   }
 
   const handlePauseButton = () => {
-    if (paused_timer)
-      unpauseTimer();
-    else
-      pauseTimer();
   }
 
   return (
     <View style={{...styles.mainView, backgroundColor: props.teams[current_team]}}>
       <View style={{...styles.basicView, marginTop: 25}}>
         <Text style={styles.basicTitle}>Round {round}</Text>
-        <Text style={{...styles.basicTitle, fontSize: 50}}>{current_word}</Text>
+        <Text style={{...styles.basicTitle, fontSize: 50}}>word</Text>
       </View>
       <View style={{...styles.basicView, marginTop: 20}}>
-        <Text style={{...styles.basicTitle, fontSize: 80}}>{timer}s</Text>
+        <Text style={{...styles.basicTitle, fontSize: 80}}>{80}s</Text>
         <TouchableOpacity style={styles.button} onPress={() => handlePauseButton()}>
           <Text style={{...styles.basicTitle, fontSize: 30}}>
-            {(current_team == 0) && (timer == props.timer) ? 'Start round' : paused_timer ? 'Continue' : 'Pause'}
+            {/*(current_team == 0) && (timer == props.timer) ? 'Start round' : paused_timer ? 'Continue' : 'Pause'*/}
+						Start round
           </Text>
         </TouchableOpacity>
       </View>
