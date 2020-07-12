@@ -14,17 +14,15 @@ export default function Game({ route }) {
 
 
   const increaseScore = (team) => {
-    //if (paused_timer) {
-      var score_copy = Object.assign({}, score);
-      score_copy[team]++;
-      setScore(score_copy);
+		var score_copy = Object.assign({}, score);
+		score_copy[team]++;
+		setScore(score_copy);
   }
 
   const decreaseScore = (team) => {
-    //if (paused_timer) {
-      var score_copy = Object.assign({}, score);
-      score_copy[team]--;
-      setScore(score_copy);
+		var score_copy = Object.assign({}, score);
+		score_copy[team]--;
+		setScore(score_copy);
   }
 
   const handlePauseButton = () => {
@@ -32,23 +30,23 @@ export default function Game({ route }) {
 
   return (
     <View style={{...styles.mainView, backgroundColor: props.teams[current_team]}}>
-      <View style={{...styles.basicView, marginTop: 25}}>
+      <View style={styles.roundDescription}>
         <Text style={styles.basicTitle}>Round {round}</Text>
-        <Text style={{...styles.basicTitle, fontSize: 50}}>word</Text>
+        <Text style={styles.currentWord}>word</Text>
       </View>
-      <View style={{...styles.basicView, marginTop: 20}}>
-        <Text style={{...styles.basicTitle, fontSize: 80}}>{80}s</Text>
+      <View style={styles.roundActionsView}>
+        <Text style={styles.timer}>{80}s</Text>
         <TouchableOpacity style={styles.button} onPress={() => handlePauseButton()}>
-          <Text style={{...styles.basicTitle, fontSize: 30}}>
+          <Text style={styles.basicTitle}>
             {/*(current_team == 0) && (timer == props.timer) ? 'Start round' : paused_timer ? 'Continue' : 'Pause'*/}
 						Start round
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{...styles.basicView, marginTop: 'auto', marginBottom: 15, flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'center'}}>
+      <View style={styles.teamListView}>
         {props.teams.map((team) => {
           return (
-            <View key={team} style={{...styles.teamScore, borderRadius: 15, backgroundColor: team, margin: 5}}>
+            <View key={team} style={{...styles.teamScore, backgroundColor: team}}>
               <TouchableOpacity
                 onPress={() => increaseScore(team)}
                 onLongPress={() => decreaseScore(team)}
@@ -80,15 +78,50 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
-  teamScore: {
+	teamScore: {
     width: 50,
     height: 50,
+		borderRadius: 15,
+		margin: 5,
   },
-  basicView: {
+  roundDescription: {
+		marginTop: 25,
     width: '70%',
     paddingVertical: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
     alignItems: 'center',
+  },
+  roundActionsView: {
+		marginTop: 20,
+    width: '70%',
+    paddingVertical: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    alignItems: 'center',
+  },
+	basicView: {
+    width: '70%',
+    paddingVertical: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    alignItems: 'center',
+  },
+	teamListView: {
+    width: '70%',
+    paddingVertical: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    alignItems: 'center',
+		marginTop: 'auto',
+		marginBottom: 15,
+		flexWrap: 'wrap',
+		flexDirection: 'row',
+		justifyContent: 'center',
+  },
+  currentWord: {
+    color: 'white',
+    fontSize: 50,
+  },
+  timer: {
+    color: 'white',
+    fontSize: 80,
   },
   basicTitle: {
     color: 'white',
