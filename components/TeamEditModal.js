@@ -39,7 +39,7 @@ export default function TeamEditModal(props) {
             </View>
 
             <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              style={styles.closeButton}
               onPress={() => props.changeModal(false) }
             >
               <Text style={styles.textStyle}>Close</Text>
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5
   },
-  openButton: {
-    backgroundColor: "#F194FF",
+  closeButton: {
+    backgroundColor: "#2196F3",
     borderRadius: 20,
     padding: 10,
     elevation: 2,
