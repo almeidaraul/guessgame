@@ -11,13 +11,27 @@ export default function Game({ route }) {
   const [current_team, setCurrentTeam] = React.useState(0);
   const [round, setRound] = React.useState(1);
   const [score, setScore] = React.useState(scoreInit(props.teams));
+
+	const [currentWord, setCurrentWord] = React.useState(0);
+	const [shuffledWords, setShuffledWords] = React.useState(words[props.theme]);
+
 	const [timerSeconds, setTimerSeconds] = React.useState(props.timer);
 	const [timerPaused, setTimerPaused] = React.useState(true);
+
+	//word logic
+	React.useEffect(() => { setShuffledWords(shuffle(words[props.theme].slice())) }, []);
+
+	const updateCurrentWord = () => {
+		setCurrentWord((currentWord+1)%shuffledWords.length);
+	}
+	//end word logic
 
 	//timer logic
 	React.useEffect(() => {
 		!timerPaused && timerSeconds > 0 && setTimeout(() => setTimerSeconds(timerSeconds - 1), 1000);
-		if (!timerSeconds) { //just got to zero
+		console.log(currentWord);
+		if (!timerSeconds) { //just got to zero seconds
+			updateCurrentWord();
 			if (!((current_team+1)%(props.teams.length)))
 				incrementRound();
 			setCurrentTeam((current_team+1)%(props.teams.length));
@@ -55,11 +69,27 @@ export default function Game({ route }) {
     <View style={{...styles.mainView, backgroundColor: props.teams[current_team]}}>
       <View style={styles.roundDescription}>
         <Text style={styles.basicTitle}>Round {round}</Text>
-        <Text style={styles.currentWord}>word</Text>
+        <Text style={styles.currentWord}>
+					{
+						!timerPaused ? 
+							shuffledWords[currentWord]
+							: !timerIsReset() ?
+								shuffledWords[currentWord]
+								: '--'
+					}
+				</Text>
+				<TouchableOpacity onPress={updateCurrentWord}>
+					<Text style={styles.wordAdvice}>
+						(Skip)
+					</Text>
+				</TouchableOpacity>
+				<Text style={styles.previousWord}>
+					Previous: { currentWord ? shuffledWords[currentWord-1] : '--' }
+				</Text>
       </View>
       <View style={styles.roundActionsView}>
         <Text style={styles.timer}>{timerSeconds}s</Text>
-        <TouchableOpacity style={styles.button} onPress={() => handlePauseButton()}>
+        <TouchableOpacity onPress={() => handlePauseButton()}>
           <Text style={styles.basicTitle}>
             {(current_team == 0) && timerIsReset() ? 'Start round' : timerPaused ? (timerIsReset() ? 'Start' : 'Continue') : 'Pause'}
           </Text>
@@ -141,6 +171,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 50,
   },
+  previousWord: {
+    color: 'white',
+    fontSize: 15,
+  },
+	wordAdvice: {
+		color: 'white',
+		fontSize: 20,
+	},
   timer: {
     color: 'white',
     fontSize: 80,
@@ -160,3 +198,20 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
   },
 })
+
+/**
+ * from https://stackoverflow.com/a/6274381
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ */
+const shuffle = (a) => {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+

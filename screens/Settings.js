@@ -5,10 +5,11 @@ import { ScrollView } from 'react-native-gesture-handler';
 import TeamList from '../components/TeamList.js';
 import ThemeDropdown from '../components/ThemeDropdown.js'
 import SecondsInput from '../components/SecondsInput.js';
+import words from '../assets/themes.js';
 
 export default function Settings({navigation, route}) {
 	const [teams, setTeams] = React.useState(['skyblue']);
-	const [theme, setTheme] = React.useState("Raul");
+	const [theme, setTheme] = React.useState(Object.keys(words)[0]);
 	const [seconds, setSeconds] = React.useState(60);
   return (
     <View style={styles.container}>
